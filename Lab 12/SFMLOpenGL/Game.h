@@ -5,12 +5,11 @@
 #include <GL/glew.h>
 #include <GL/wglew.h>
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
+#include <Player.h>
 
 #include <Debug.h>
 
@@ -35,6 +34,8 @@ private:
 	void update();
 	void render();
 	void unload();
+
+	Player player;
 };
 
 #endif

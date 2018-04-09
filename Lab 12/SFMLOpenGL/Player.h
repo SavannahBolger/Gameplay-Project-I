@@ -1,0 +1,36 @@
+#pragma once
+#include <iostream>
+#include <GL/glew.h>
+#include <GL/wglew.h>
+#include <SFML/Window.hpp>
+#include <SFML/OpenGL.hpp>
+#include "Vector3D.h"
+#include "Matrix3.h"
+
+using namespace std;
+using namespace sf;
+
+class Player
+{
+public:
+	Player();
+	~Player();
+	void initialize();
+	void update();
+	void render();
+	void unload();
+
+private:
+	Window window;
+	bool isRunning = false;
+
+	Clock clock;
+	Time elapsed;
+
+	Vector3D currentPosition[36];
+	float rotationAngle = 0.0f;
+	Matrix3 xRotation;//x axis rotation
+	Matrix3 yRotation;//y axis rotation
+	Matrix3 zRotation;//z axis rotation
+	Vector3D activeTranslation{ 0,0,0 };
+};

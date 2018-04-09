@@ -51,7 +51,6 @@ Game::~Game(){}
 
 void Game::run()
 {
-
 	initialize();
 
 	Event event;
@@ -67,30 +66,6 @@ void Game::run()
 			if (event.type == Event::Closed)
 			{
 				isRunning = false;
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			{
-				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			{
-				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			{
-				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate
 			}
 		}
 		update();
@@ -309,18 +284,31 @@ void Game::update()
 #if (DEBUG >= 2)
 	DEBUG_MSG("Updating...");
 #endif
+
 	// Update Model View Projection
 	mvp = projection * view * model;
+
+	// Set Model Rotation
+	model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
+	
+	// Set Model Rotation
+	//model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
+
+	// Set Model Rotation
+	//model = rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
+
+	// Set Model Rotation
+	model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate
 }
 
 void Game::render()
 {
-
 #if (DEBUG >= 2)
 	DEBUG_MSG("Render Loop...");
 #endif
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	//VBO Data....vertices, colors and UV's appended
 	glBufferSubData(GL_ARRAY_BUFFER, 0 * VERTICES * sizeof(GLfloat), 3 * VERTICES * sizeof(GLfloat), vertices);
@@ -344,6 +332,8 @@ void Game::render()
 	glEnableVertexAttribArray(positionID);
 	glEnableVertexAttribArray(colorID);
 	glEnableVertexAttribArray(uvID);
+	
+	player.render();
 
 	//Draw Element Arrays
 	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
@@ -353,7 +343,7 @@ void Game::render()
 	glDisableVertexAttribArray(positionID);
 	glDisableVertexAttribArray(colorID);
 	glDisableVertexAttribArray(uvID);
-	
+
 }
 
 void Game::unload()
@@ -365,5 +355,6 @@ void Game::unload()
 	glDeleteBuffers(1, &vbo);	//Delete Vertex Buffer
 	glDeleteBuffers(1, &vib);	//Delete Vertex Index Buffer
 	stbi_image_free(img_data);		//Free image
+	player.unload();
 }
 
