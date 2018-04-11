@@ -333,8 +333,6 @@ void Game::render()
 	glEnableVertexAttribArray(colorID);
 	glEnableVertexAttribArray(uvID);
 	
-	player.render();
-
 	//Draw Element Arrays
 	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
 	window.display();
@@ -355,6 +353,5 @@ void Game::unload()
 	glDeleteBuffers(1, &vbo);	//Delete Vertex Buffer
 	glDeleteBuffers(1, &vib);	//Delete Vertex Index Buffer
 	stbi_image_free(img_data);		//Free image
-	player.unload();
 }
 
