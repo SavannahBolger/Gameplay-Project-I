@@ -8,20 +8,26 @@ NPC::~NPC()
 {
 }
 
+//initialise the position of the npc cubes
 void NPC::initialize(GLfloat vertices[])
 {
-	for (int i = 72, index = 0; i < 216, index < 72; i = i + 3, index++)
+	for (int i = 72, index = 0; i < 288, index < 72; i = i + 3, index++)
 	{
 		currentPosition[index] = Vector3D{ vertices[i], vertices[i + 1], vertices[i + 2] };
 	}
-	for (int i = 72, index = 0; i < 216, index < 72; i = i + 3, index++)
+	for (int i = 72, index = 0; i < 288, index < 72; i = i + 3, index++)
 	{
 		vertices[i] = currentPosition[index].X();
 		vertices[i + 1] = currentPosition[index].Y();
 		vertices[i + 2] = currentPosition[index].Z();
 	}
+	for (size_t i = 0; i < 72; i++)
+	{
+		originalPosition[i] = currentPosition[i];
+	}
 }
 
+//update the position of the npc cubes when moving
 void NPC::update(GLfloat vertices[])
 {
 
@@ -43,7 +49,7 @@ void NPC::update(GLfloat vertices[])
 		currentPosition[i] = zRotation * currentPosition[i];
 	}
 
-	for (int i = 72, index = 0; i < 216, index < 72; i = i + 3, index++)
+	for (int i = 72, index = 0; i < 288, index < 72; i = i + 3, index++)
 	{
 		vertices[i] = currentPosition[index].X();
 		vertices[i + 1] = currentPosition[index].Y();

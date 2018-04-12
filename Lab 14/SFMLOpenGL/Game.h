@@ -14,7 +14,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-
+#include "Player.h"
+#include "NPC.h"
 #include <Debug.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -43,6 +44,9 @@ private:
 	void update();
 	void render();
 	void unload();
+
+	Player player;
+	NPC npc;
 };
 
 #endif  // ! GAME_H

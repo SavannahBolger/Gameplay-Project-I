@@ -17,9 +17,9 @@ GLuint	vsid,		// Vertex Shader ID
 //const string filename = ".//Assets//Textures//coordinates.tga";
 //const string filename = ".//Assets//Textures//cube.tga";
 //const string filename = ".//Assets//Textures//grid.tga";
-const string filename = ".//Assets//Textures//grid_wip.tga";
+//const string filename = ".//Assets//Textures//grid_wip.tga";
 //const string filename = ".//Assets//Textures//minecraft.tga";
-//const string filename = ".//Assets//Textures//texture.tga";
+const string filename = ".//Assets//Textures//texture.tga";
 //const string filename = ".//Assets//Textures//texture_2.tga";
 //const string filename = ".//Assets//Textures//uvtemplate.tga";
 
@@ -110,6 +110,10 @@ void Game::initialize()
 	//Indices to be drawn
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * INDICES * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
+	player.initialize(vertices);
+	npc.initialize(vertices);
+	goal.initialize(vertices);
+
 	const char* vs_src = 
 		"#version 400\n\r"
 		""
@@ -164,12 +168,12 @@ void Game::initialize()
 		"void main() {"
 		//"	vec4 lightColor = vec4(1.0f, 0.0f, 0.0f, 1.0f); "
 		//"	fColor = vec4(0.50f, 0.50f, 0.50f, 1.0f);"
-		//"	fColor = texture2D(f_texture, uv);"
+		"	fColor = texture2D(f_texture, uv);"
 		//"	fColor = color * texture2D(f_texture, uv);"
 		//"	fColor = lightColor * texture2D(f_texture, uv);"
 		//"	fColor = color + texture2D(f_texture, uv);"
 		//"	fColor = color - texture2D(f_texture, uv);"
-		"	fColor = color;"
+		//"	fColor = color;"
 		"}"; //Fragment Shader Src
 
 	DEBUG_MSG("Setting Up Fragment Shader");
@@ -277,6 +281,9 @@ void Game::initialize()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
+
+	font.loadFromFile(".//Assets//Fonts//BBrick.ttf");
+
 }
 
 void Game::update()
@@ -289,7 +296,7 @@ void Game::update()
 	mvp = projection * view * model;
 
 	// Set Model Rotation
-	model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
+	/*model = rotate(model, 0.01f, glm::vec3(0, 1, 0)); // Rotate
 	
 	// Set Model Rotation
 	//model = rotate(model, -0.01f, glm::vec3(0, 1, 0)); // Rotate
@@ -298,7 +305,80 @@ void Game::update()
 	//model = rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
 
 	// Set Model Rotation
-	model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate
+	model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate*/
+
+	//update cube movement
+	player.update(vertices);
+	npc.update(vertices);
+	goal.update(vertices);
+
+	//check goal cube collision with x rotation npc
+	for (int i = 0; i < 24; i++)
+	{
+		if (goal.active)
+		{
+			if ((goal.currentPosition[i].X() > -0.50f && goal.currentPosition[i].X() < 0.50f) && (goal.currentPosition[i].Y() > 1.50f && goal.currentPosition[i].Y() < 2.50f))
+			{
+				if ((npc.currentPosition[i].X() > -0.70f && npc.currentPosition[i].X() < 0.70f) && (npc.currentPosition[i].Y() > 1.30f && npc.currentPosition[i].Y() < 2.30f))
+				{
+					goal.score += 100;
+					goal.active = false;
+					goal.reset();
+					player.reset();
+				}
+			}
+		}
+	}
+
+	//check goal cube collision with y rotation npc
+	for (int i = 24, index = 0; i < 48, index < 24; i++, index++)
+	{
+		if (goal.active)
+		{
+			if ((goal.currentPosition[index].X() > -2.50f && goal.currentPosition[index].X() < -1.50f) && (goal.currentPosition[index].Y() > 1.50f && goal.currentPosition[index].Y() < 2.50f))
+			{
+				if ((npc.currentPosition[i].X() > -2.70f && npc.currentPosition[i].X() < -1.30f) && (npc.currentPosition[i].Y() > 1.30f && npc.currentPosition[i].Y() < 2.30f))
+				{
+					goal.score += 100;
+					goal.active = false;
+					goal.reset();
+					player.reset();
+				}
+			}
+		}
+	}
+
+	//check goal cube collision with z rotation npc
+	for (int i = 48, index = 0; i < 72, index < 24; i++, index++)
+	{
+		if (goal.active)
+		{
+			if ((goal.currentPosition[index].X() > 1.50f && goal.currentPosition[index].X() < 2.50f) && (goal.currentPosition[index].Y() > 1.50f && goal.currentPosition[index].Y() < 2.50f))
+			{
+				if ((npc.currentPosition[i].X() > 1.30f && npc.currentPosition[i].X() < 2.70f) && (npc.currentPosition[i].Y() > 1.30f && npc.currentPosition[i].Y() < 2.30f))
+				{
+					goal.score += 100;
+					goal.active = false;
+					goal.reset();
+					player.reset();
+				}
+			}
+		}
+	}
+
+	//check if goal cube has gone outside the screen
+	if (goal.active)
+	{
+		for (int i = 0; i < 24; i++)
+		{
+			if (goal.currentPosition[i].Y() > 5.00f)
+			{
+				goal.active = false;
+				goal.reset();
+				player.reset();
+			}
+		}
+	}
 }
 
 void Game::render()
@@ -342,6 +422,9 @@ void Game::render()
 	glDisableVertexAttribArray(colorID);
 	glDisableVertexAttribArray(uvID);
 
+	//display the score to the screen as screen title
+	string gameScore("Score = " + std::to_string(goal.score));
+	window.setTitle(gameScore);
 }
 
 void Game::unload()

@@ -7,9 +7,12 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
-#include <Player.h>
+#include "Player.h"
+#include "NPC.h"
+#include "Goal.h"
 
 #include <Debug.h>
 
@@ -30,12 +33,19 @@ public:
 private:
 	Window window;
 	bool isRunning = false;
-	void initialize();
+	void initialize(); 
 	void update();
 	void render();
 	void unload();
 
+	//player class
 	Player player;
+	//npc class 
+	NPC npc;
+	//goal class
+	Goal goal;
+	//font for score
+	sf::Font font;
 };
 
 #endif
